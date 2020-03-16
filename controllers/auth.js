@@ -3,6 +3,7 @@ const shortId = require('shortid');
 const jwt = require('jsonwebtoken');
 const expressJwt = require('express-jwt');
 
+
 exports.signup = (req, res) => {
     // console.log(req.body);
     User.findOne({ email: req.body.email }).exec((err, user) => {
@@ -71,8 +72,38 @@ exports.requireSignin = expressJwt({
     secret: process.env.JWT_SECRET
 });
 
+exports.authMiddleware = (req, res, next) => {
+    const authUserId = req.user._id;
+    User.findOne({_id: authUserId}).exec((err, user) => {
+        if(err || !user){
+            res.status(400).json({
+                error: 'User not found'
+            })
+        }
+        req.profile = user
+        next()
+    })
+}
 
+exports.adminMiddleware = (req, res, next) => {
+    const adminUserId = req.user._id;
+    User.findOne({_id: adminUserId}).exec((err, user) => {
+        if(err || !user){
+            res.status(400).json({
+                error: 'User not found'
+            })
+        }
 
+        if(user.role !== 1){
+            res.status(400).json({
+                error: 'Admin resource. Access denied'
+            })
+        }
+
+        req.profile = user
+        next()
+    })
+}
 
 
 
