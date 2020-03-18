@@ -8,7 +8,7 @@ const { runValidation } = require('../validators');
 const { tagValidator } = require('../validators/tag');
 
 router.post('/tag', tagValidator, runValidation, requireSignin, adminMiddleware, create);
-router.get('/tag', list);
+router.get('/tags', list);
 router.get('/tag/:slug', read);
 router.delete('/tag/:slug', remove)
 
