@@ -21,7 +21,7 @@ const blogSchema = new mongoose.Schema(
             min: 10,
             max: 2000000,
         },
-        exerpt: {
+        excerpt: {
             type: String,
             max: 1000
         },
@@ -50,7 +50,7 @@ const blogSchema = new mongoose.Schema(
             contentType: String
         },
     },
-    { timestamp: true }
+    { timestamps: true }
 );
 
 
