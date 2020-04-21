@@ -32,7 +32,7 @@ exports.list = (req, res) => {
 
 exports.read = (req, res) => {
     const slug = req.params.slug.toLowerCase();
-    Tag.find({slug}).exec((err, tag) => {
+    Tag.findOne({slug}).exec((err, tag) => {
         if(err)return res.status(400).json({
             err: errorHandler(err)
         })
