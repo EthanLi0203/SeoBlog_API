@@ -1,6 +1,8 @@
 const Tag = require('../models/tag')
 const slugify = require('slugify')
 const { errorHandler } = require('../helpers/dbErrorHandler')
+const Blog = require('../models/blog')
+const category = require('../models/category')
 
 exports.create = (req, res) => {
     const {name} = req.body;
@@ -30,11 +32,23 @@ exports.list = (req, res) => {
 
 exports.read = (req, res) => {
     const slug = req.params.slug.toLowerCase();
-    Tag.find({slug}).exec((err, category) => {
+    Tag.find({slug}).exec((err, tag) => {
         if(err)return res.status(400).json({
             err: errorHandler(err)
         })
-        res.json(category)
+        Blog.find({tags: tag})
+        .populate('categories', '_id name slug')
+        .populate('tags', '_id name slug')
+        .populate('postedBy', '_id name')
+        .select('_id title slug excerpt categories tags postedBy updatedAt createdAt')
+        .exec((err, data) => {
+            if(err){
+                return res.status(400).json({
+                    err: errorHandler(err)
+                })
+            }
+            res.json({tags: tag, blogs: data})
+        })    
     })
 }
 
